@@ -1,0 +1,24 @@
+improve log system
+- one folder named with time
+- one file for each link
+- name with url
+- should only record pages that produced information
+- currently writes to file redundant links
+
+Determine how to terminate program
+- counter
+- if gained any new information or not
+- if return to an already visited url
+
+Process the data
+- maybe website specific
+
+Handle robot.txt
+- for more professional stuff, use user agent
+
+Disguise web scraping
+
+Honeypots?
+
+Whats the difference between lxml and html.parser?
+
