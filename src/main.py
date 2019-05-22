@@ -2,63 +2,68 @@
 # Michael Barbini
 # 12/20/2018
 
-from src import page_fetcher
-from src import analyze
-from src import miscellaneous
-from src import hidden
+from src import page_fetcher, analyze, miscellaneous, hidden
 from bs4 import BeautifulSoup
-
-# # Ready url queue
-
-# Get URL from file
-# file = "C:/Users/micha/PycharmProjects/GeneralWebScraper/URLs/medium.txt"
-# url_queue = page_fetcher.get_url(file)
-
-# Get URL from google search
-# url_queue = page_fetcher.web_search("Bob")
-
-# Get URLs from a google search using given key word
-url_queue = hidden.hidden_search("Brah")
-print(url_queue)
-
-# Track visited links
-visited_links_file_name = "C:/Users/micha/PycharmProjects/GeneralWebScraper/URLs/Visited Links/" + \
-                          miscellaneous.format_date_time()
-visited_links_file = open(visited_links_file_name, "x")
-visited_links = []
+import threading
+import time
 
 
-def process(queue):
-    """
-    Recursively extracts data and proceeds to all found hyperlinks
-    :param queue
-    """
+class WebScraper:
 
-    for url in queue:
-        if url not in visited_links and len(visited_links) <= 20:
+    def __init__(self):
+        self.url_queue = {}
+        self.visited_links = []
+        self.visited_links_file = None
+        self.is_tor_setup = False
 
-            raw_html_content = page_fetcher.get_html_content(url)
+    # Get URL from file
+    def file_search(self, file):
+        self.url_queue = page_fetcher.get_url(file)
 
-            if raw_html_content:
-                html_content = BeautifulSoup(raw_html_content, 'html.parser')
-                # Do processing here
-                # analyze.analyze_general(html_content)
+    def google_search(self, keyword):
+        self.url_queue = page_fetcher.web_search(keyword)
 
-                # Get hyperlinks
-                # new_queue = page_fetcher.get_links(html_content, url)
-                #
-                visited_links.append(url)
-                #
-                # Recurse
-                # process(new_queue)
+    def tor_search(self, keyword):
+        if self.is_tor_setup:
+            self.url_queue = hidden.hidden_search(keyword)
+        else:
+            self.setup_tor()
 
+    def setup_tor(self, location):
+        # first connect to tor network
+        thread1 = threading.Thread(target=hidden.start_tor,
+                                   args=(location,))
+        thread1.start()
 
-# process(url_queue)
-print(visited_links)
+        time.sleep(4)
+        self.is_tor_setup = True
 
-# Write hyperlinks to external final
-visit_file = open(visited_links_file_name, "a")
-visit_file.write("\n".join(visited_links))
-visit_file.close()
+    def setup_log(self, folder_name):
+        # Track visited links
+        visited_links_file_name = folder_name + miscellaneous.format_date_time()
+        self.visited_links_file = open(visited_links_file_name, "x")
 
+    def write_log(self):
+        # Write hyperlinks to external final
+        visit_file = open(self.visited_links_file, "a")
+        visit_file.write("\n".join(self.visited_links))
+        visit_file.close()
 
+    def process(self, queue, cap):
+        for url in queue:
+            if url not in self.visited_links and len(self.visited_links) <= cap:
+
+                raw_html_content = page_fetcher.get_html_content(url)
+
+                if raw_html_content:
+                    html_content = BeautifulSoup(raw_html_content, 'html.parser')
+                    # Do processing here
+                    # analyze.analyze_general(html_content)
+
+                    # Get hyperlinks
+                    # new_queue = page_fetcher.get_links(html_content, url)
+                    #
+                    self.visited_links.append(url)
+                    #
+                    # Recurse
+                    # process(new_queue)
