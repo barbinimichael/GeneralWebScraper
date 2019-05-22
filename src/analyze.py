@@ -6,7 +6,7 @@ def analyze_general(soup):
     This is meant to analyze a web page in a generic manner (not site-specific)
     Get title
     Get text
-        - Do shit with it
+        - Manipulate
         - Determine topic
             - Determine keywords
         - Determine how it presents the information

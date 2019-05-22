@@ -9,12 +9,12 @@
 from requests import get
 from requests.exceptions import RequestException
 from contextlib import closing
-from bs4 import BeautifulSoup
-import urllib3
 import re
+import googlesearch
 
 
-# 1) Start with initial URLs- the "seeds"
+# Start with initial URLs- the "seeds", given in file format
+# Only if do not plan to begin with a general web search
 def get_url(file):
     """
     Extract URLs from file, add to crawler frontier and return
@@ -31,6 +31,12 @@ def get_url(file):
         url_queue.append(url)
     file_txt.close()
     return url_queue
+
+
+# Do a google search for a given key word
+# Use results page as seeds for hyperlinks
+def web_search(keyword, num):
+    googlesearch.search(keyword, num=num)
 
 
 # 2) Visit pages

@@ -5,12 +5,21 @@
 from src import page_fetcher
 from src import analyze
 from src import miscellaneous
+from src import hidden
 from bs4 import BeautifulSoup
 
+# # Ready url queue
 
-# Ready url queue
-file = "C:/Users/micha/PycharmProjects/GeneralWebScraper/URLs/medium.txt"
-url_queue = page_fetcher.get_url(file)
+# Get URL from file
+# file = "C:/Users/micha/PycharmProjects/GeneralWebScraper/URLs/medium.txt"
+# url_queue = page_fetcher.get_url(file)
+
+# Get URL from google search
+# url_queue = page_fetcher.web_search("Bob")
+
+# Get URLs from a google search using given key word
+url_queue = hidden.hidden_search("Brah")
+print(url_queue)
 
 # Track visited links
 visited_links_file_name = "C:/Users/micha/PycharmProjects/GeneralWebScraper/URLs/Visited Links/" + \
@@ -33,19 +42,20 @@ def process(queue):
             if raw_html_content:
                 html_content = BeautifulSoup(raw_html_content, 'html.parser')
                 # Do processing here
-                analyze.analyze_general(html_content)
+                # analyze.analyze_general(html_content)
 
                 # Get hyperlinks
-                new_queue = page_fetcher.get_links(html_content, url)
+                # new_queue = page_fetcher.get_links(html_content, url)
                 #
                 visited_links.append(url)
                 #
-                # # Recurse
-                process(new_queue)
+                # Recurse
+                # process(new_queue)
 
 
-process(url_queue)
+# process(url_queue)
 print(visited_links)
+
 # Write hyperlinks to external final
 visit_file = open(visited_links_file_name, "a")
 visit_file.write("\n".join(visited_links))
