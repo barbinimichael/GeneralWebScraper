@@ -25,7 +25,7 @@ class WebScraper:
 
     def tor_search(self, keyword):
         if self.is_tor_setup:
-            self.url_queue = hidden.hidden_search(keyword)
+            self.url_queue = hidden.google_search(keyword)
         else:
             self.setup_tor()
 

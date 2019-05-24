@@ -23,11 +23,13 @@ def analyze_general(soup):
     :return:
     """
 
-    print(soup.title.text)
-    # print(soup.p.text)
+    # Get title
+    title = soup.title.text
+    if title is None:
+        title = ""
 
     # getting all text
-    # print(soup.get_text())
+    alltext = soup.get_text()
 
     # Getting information only from 'body' of page
     # (Enclosed within body tag)
@@ -46,4 +48,4 @@ def analyze_general(soup):
             row_data = [i.text for i in data]
             print(row_data)
 
-    return soup
+    return title, body
