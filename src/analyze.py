@@ -1,4 +1,6 @@
-# Analyze page for desired information
+import nltk
+from nltk.corpus import stopwords
+import string
 
 
 def analyze_general(soup):
@@ -23,29 +25,33 @@ def analyze_general(soup):
     :return:
     """
 
-    # Get title
-    title = soup.title.text
-    if title is None:
-        title = ""
+    # Preprocess
+    text = soup.get_text()
 
-    # getting all text
-    alltext = soup.get_text()
+    text = text.translate(str.maketrans(dict.fromkeys(string.punctuation)))
 
-    # Getting information only from 'body' of page
-    # (Enclosed within body tag)
-    body = soup.body
-    for paragraph in body.find_all('p'):
-        print(paragraph.text + "\n")
+    tokens = nltk.word_tokenize(text)
 
-    # Getting information from table
-    table = soup.table
-    if table is not None:
-        print(table.text)
-        # Getting only row data
-        table_rows = table.find_all('tr')
-        for row in table_rows:
-            data = row.find_all('td')
-            row_data = [i.text for i in data]
-            print(row_data)
+    print(tokens)
 
-    return title, body
+    # Removing stop words
+    for token in tokens:
+        if token in stopwords.words('english'):
+            tokens.remove(token)
+
+    # Getting max frequency word
+    freq = nltk.FreqDist(tokens)
+
+    for key, val in freq.items():
+        print(str(key) + ':' + str(val))
+    freq.plot(20, cumulative=False)
+
+    # Part of speech tagging
+    tokens = nltk.pos_tag(tokens)
+
+    print(tokens)
+
+    # pattern = 'NP: {<DT>?<JJ>*<NN>}'
+    # cp = nltk.RegexpParser(pattern)
+    # cs = cp.parse(tokens)
+    # print(cs)

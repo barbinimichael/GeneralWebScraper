@@ -9,23 +9,26 @@ import time
 
 
 class WebScraper:
-
+    """
+    Web scraper designed to extract information on any form webpage
+    """
     def __init__(self):
         self.url_queue = {}
         self.visited_links = []
         self.visited_links_file = None
         self.is_tor_setup = False
+        self.session = None
 
     # Get URL from file
     def file_search(self, file):
         self.url_queue = page_fetcher.get_url(file)
 
-    def google_search(self, keyword):
-        self.url_queue = page_fetcher.web_search(keyword)
+    def google_search(self, keyword, num):
+        self.url_queue = page_fetcher.web_search(keyword, num=num)
 
     def tor_search(self, keyword):
         if self.is_tor_setup:
-            self.url_queue = hidden.google_search(keyword)
+            self.url_queue = hidden.google_search(keyword=keyword)
         else:
             self.setup_tor()
 
@@ -36,6 +39,9 @@ class WebScraper:
         thread1.start()
 
         time.sleep(4)
+
+        self.session = hidden.start_tor_session()
+
         self.is_tor_setup = True
 
     def setup_log(self, folder_name):
@@ -67,3 +73,8 @@ class WebScraper:
                     #
                     # Recurse
                     # process(new_queue)
+
+
+raw_html_content = page_fetcher.get_html_content("https://en.wikipedia.org/wiki/Boronia_tenuis")
+html_content = BeautifulSoup(raw_html_content, 'html.parser')
+analyze.analyze_general(html_content)

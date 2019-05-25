@@ -32,7 +32,7 @@ def start_tor_session():
 
 def google_search(session, keyword):
     """
-    Search for a keyword using tor port
+    Search for a keyword using a given session
     :param session: Requests session
     :param keyword: String to search
     :return: List of hyperlinks returned from search
@@ -52,9 +52,9 @@ def google_search(session, keyword):
     return hyperlinks
 
 
-def get_page(session, url):
+def get_session_page(session, url):
     """
-    Retrieve html content from web page
+    Retrieve html content from web page using given session
     :param session: Requests session
     :param url: URL string
     :return: html content
